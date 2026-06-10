@@ -1,21 +1,167 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Detailed Screening — Submission Portal</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Koda Capital &middot; Manager Due Diligence Portal</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
+
+:root{
+  --navy:#001F41; --teal:#00C7B5; --blue:#4799F5;
+  --teal-band:#E7F7F4; --teal-line:#9FE2D9;
+  --ink:#15212E; --muted:#5E6E7E; --faint:#8B98A6;
+  --line:#E3E9EF; --line-soft:#EEF2F6;
+  --paper:#FFFFFF; --bg:#F4F6F8;
+  --ok:#1F9D6B; --okbg:#E8F6EF; --err:#C0392B; --errbg:#FCEDEC;
+  --display:Georgia,'Times New Roman',serif;
+  --body:'Work Sans',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --rail-w:264px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:var(--body);color:var(--ink);background:var(--bg);font-weight:400;line-height:1.5;-webkit-font-smoothing:antialiased}
+.eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--teal);font-weight:600}
+button{font-family:var(--body);cursor:pointer}
+
+.topbar{display:flex;align-items:center;gap:16px;padding:16px 28px;background:var(--navy);color:#fff}
+.topbar img.logo{height:34px;width:auto;display:block}
+.topbar .sep{width:1px;height:24px;background:rgba(255,255,255,.22)}
+.topbar .sub{font-size:13px;color:#C8D2DD;letter-spacing:.02em}
+
+.stage{max-width:880px;margin:0 auto;padding:64px 28px 90px}
+.intro{max-width:620px}
+.intro h1{font-family:var(--display);font-weight:400;font-size:34px;line-height:1.15;margin:14px 0 12px;color:var(--navy)}
+.intro p{color:var(--muted);font-size:16px;margin:0}
+.tree{margin-top:46px}
+.node{animation:rise .35s ease both}
+.qrow{display:flex;align-items:baseline;gap:14px;margin-bottom:18px}
+.qnum{font-family:var(--display);font-size:14px;color:var(--teal);font-weight:700;white-space:nowrap;padding-top:2px}
+.qtext{font-size:19px;color:var(--navy);font-weight:500}
+.opts{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.opt{text-align:left;background:var(--paper);border:1px solid var(--line);border-radius:13px;padding:22px 22px 20px;transition:border-color .18s,box-shadow .18s,transform .18s;display:flex;flex-direction:column;gap:7px;min-height:128px}
+.opt:hover{border-color:var(--teal);box-shadow:0 8px 26px -16px rgba(0,31,65,.4);transform:translateY(-2px)}
+.opt:focus-visible{outline:2.5px solid var(--blue);outline-offset:2px}
+.opt .ot{font-size:17px;font-weight:600;color:var(--navy);display:flex;align-items:center;gap:9px}
+.opt .ot::before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal);flex:none}
+.opt .od{font-size:13.5px;color:var(--muted);line-height:1.45}
+.opt .go{margin-top:auto;font-size:12.5px;color:var(--teal);font-weight:600;letter-spacing:.02em}
+.path{display:flex;flex-wrap:wrap;align-items:center;gap:9px;margin-bottom:30px;min-height:24px}
+.crumb{display:inline-flex;align-items:center;gap:7px;font-size:12.5px;color:var(--navy);background:var(--teal-band);border:1px solid var(--teal-line);padding:5px 12px;border-radius:40px;font-weight:500}
+.crumb button{border:0;background:none;color:var(--faint);font-size:14px;line-height:1;padding:0;margin-left:1px}
+.crumb button:hover{color:var(--navy)}
+.path .arr{color:var(--faint);font-size:12px}
+.jump{margin-top:54px;padding-top:26px;border-top:1px solid var(--line)}
+.jump .lbl{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:var(--faint);font-weight:600;margin-bottom:12px}
+.jump .links{display:flex;flex-wrap:wrap;gap:10px}
+.jlink{background:none;border:1px solid var(--line);color:var(--navy);font-size:13px;padding:8px 14px;border-radius:8px;font-weight:500;transition:.16s}
+.jlink:hover{border-color:var(--navy)}
+
+.review{display:none;grid-template-columns:var(--rail-w) 1fr;min-height:calc(100vh - 66px)}
+.review.on{display:grid}
+.rail{position:sticky;top:0;align-self:start;height:calc(100vh - 66px);overflow:auto;border-right:1px solid var(--line);background:var(--paper);padding:26px 22px}
+.back{display:inline-flex;align-items:center;gap:7px;background:none;border:0;color:var(--muted);font-size:13px;font-weight:500;padding:0;margin-bottom:24px}
+.back:hover{color:var(--navy)}
+.rail .tname{font-family:var(--display);font-size:20px;color:var(--navy);line-height:1.2;margin:0 0 5px}
+.rail .tpath{font-size:12px;color:var(--faint);margin-bottom:22px}
+.nav{list-style:none;margin:0 0 22px;padding:0;border-left:1px solid var(--line)}
+.nav a{display:block;padding:7px 0 7px 14px;margin-left:-1px;border-left:2px solid transparent;color:var(--muted);text-decoration:none;font-size:13.5px;transition:.15s}
+.nav a:hover{color:var(--navy)}
+.nav a.active{color:var(--navy);border-left-color:var(--teal);font-weight:500}
+.progwrap{margin-bottom:18px}
+.progwrap .pt{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:6px}
+.progwrap .pt b{color:var(--navy);font-weight:600}
+.bar{height:5px;background:var(--line);border-radius:4px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--teal);transition:width .3s}
+.btn{width:100%;font-size:13.5px;font-weight:500;padding:11px;border-radius:9px;transition:.16s;border:1px solid transparent}
+.btn-primary{background:var(--teal);border-color:var(--teal);color:#003c36}
+.btn-primary:hover{background:#00b3a3}
+.btn-ghost{background:var(--paper);border-color:var(--navy);color:var(--navy);margin-top:10px}
+.btn-ghost:hover{background:var(--navy);color:#fff}
+
+.sheet{padding:40px 52px 110px;max-width:920px}
+.sheet .doc-eyebrow{font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--teal);font-weight:600}
+.sheet h2.doctitle{font-family:var(--display);font-weight:400;font-size:28px;color:var(--navy);margin:8px 0 28px}
+.field{margin-bottom:18px}
+.field label{display:block;font-size:13px;font-weight:600;color:var(--navy);margin-bottom:7px;letter-spacing:.01em}
+textarea.resp{width:100%;font-family:var(--body);font-size:14.5px;color:var(--ink);border:1px solid var(--line);border-radius:9px;padding:10px 13px;background:var(--paper);transition:border-color .15s,box-shadow .15s;resize:none;overflow:hidden;min-height:40px;line-height:1.5;display:block}
+textarea.resp.long{min-height:80px}
+textarea.resp:focus{outline:none;border-color:var(--teal);box-shadow:0 0 0 3px rgba(0,199,181,.15)}
+.fundname textarea.resp{font-size:16px;padding:12px 15px;min-height:46px}
+
+.section{margin-top:36px;scroll-margin-top:18px}
+.sechead{display:flex;align-items:center;gap:12px;background:var(--teal-band);border:1px solid var(--teal-line);border-radius:9px;padding:12px 16px;margin-bottom:4px}
+.sechead .sn{font-family:var(--display);font-size:13px;font-weight:700;color:var(--teal);min-width:20px}
+.sechead h3{margin:0;font-size:15.5px;font-weight:600;color:var(--navy);letter-spacing:.01em}
+.item{padding:16px 4px;border-bottom:1px solid var(--line-soft);display:grid;gap:9px}
+.item.sub{padding-left:22px;border-left:2px solid var(--line);margin-left:2px}
+.item .q{font-size:14px;color:var(--ink);font-weight:500;line-height:1.45}
+.item.sub .q{color:var(--muted);font-weight:400}
+.item .hint{font-size:12.5px;color:var(--faint);font-style:italic;margin-top:-3px}
+
+/* dropzone */
+.drop{margin-top:6px;border:1.5px dashed var(--teal-line);border-radius:12px;background:var(--teal-band);padding:28px 22px;text-align:center;transition:.18s;cursor:pointer}
+.drop:hover,.drop.over{border-color:var(--teal);background:#dcf4f0}
+.drop .di{font-size:14px;color:var(--navy);font-weight:500}
+.drop .ds{font-size:12.5px;color:var(--muted);margin-top:4px}
+.drop .browse{color:var(--teal);font-weight:600;text-decoration:underline}
+.filelist{list-style:none;margin:14px 0 0;padding:0;display:flex;flex-direction:column;gap:8px}
+.filerow{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:9px;padding:10px 13px;background:var(--paper);font-size:13.5px}
+.filerow .fn{flex:1;color:var(--ink);word-break:break-all}
+.filerow .fz{color:var(--faint);font-size:12px;white-space:nowrap}
+.filerow .rm{border:0;background:none;color:var(--faint);font-size:16px;line-height:1;padding:0}
+.filerow .rm:hover{color:var(--err)}
+
+/* submit */
+.submitblock{margin-top:40px;border-top:1px solid var(--line);padding-top:26px}
+.submitblock .sb-row{display:flex;gap:14px;align-items:center;flex-wrap:wrap}
+.btn-submit{background:var(--teal);border:1px solid var(--teal);color:#003c36;font-size:15px;font-weight:600;padding:13px 28px;border-radius:10px;transition:.16s}
+.btn-submit:hover{background:#00b3a3}
+.btn-submit:disabled{opacity:.55;cursor:default}
+.submitblock .note{font-size:12.5px;color:var(--faint);max-width:420px}
+.banner{margin-top:16px;padding:13px 16px;border-radius:10px;font-size:13.5px;display:none}
+.banner.show{display:block}
+.banner.ok{background:var(--okbg);color:var(--ok);border:1px solid #BCE6D2}
+.banner.err{background:var(--errbg);color:var(--err);border:1px solid #F3C9C5}
+.banner.info{background:#EEF4FB;color:#2C5C93;border:1px solid #CFE0F2}
+.foot{margin-top:30px;font-size:12px;color:var(--faint);border-top:1px solid var(--line);padding-top:18px}
+
+@keyframes rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (max-width:760px){
+  .opts{grid-template-columns:1fr}
+  .review.on{grid-template-columns:1fr}
+  .rail{position:static;height:auto;border-right:0;border-bottom:1px solid var(--line)}
+  .nav{display:none}.sheet{padding:28px 22px 90px}.intro h1{font-size:27px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+@media print{
+  .topbar,.rail,.back,.btn,.drop,.doc-eyebrow,.submitblock .sb-row,.submitblock .note{display:none!important}
+  body{background:#fff}.review.on{display:block}.sheet{max-width:100%;padding:0}
+  .item,.filerow{break-inside:avoid}
+  .sechead{break-after:avoid;background:#eef7f5!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  textarea.resp{border:1px solid #bbb}h2.doctitle{margin-top:0}
+}
+
+/* ---- portal: views, home, subnav ---- */
+.homelink,.to-home{display:inline-flex;align-items:center;gap:7px;background:none;border:0;color:var(--muted);font-size:13px;font-weight:500;padding:0;cursor:pointer;font-family:var(--body)}
+.homelink{margin-bottom:22px}
+.homelink:hover,.to-home:hover{color:var(--navy)}
+.home-meta{margin-top:auto;font-size:12px;color:var(--faint);font-weight:600;letter-spacing:.02em}
+.screen-subnav{max-width:1320px;margin:0 auto;padding:22px 1rem 0;display:flex;align-items:center;gap:14px}
+.screen-subnav .crumbtxt{font-size:13px;color:var(--faint)}
+#screenView{padding-bottom:8px}
+@media(max-width:760px){ .screen-subnav{padding:16px .6rem 0} }
+
+  #screen-app{
     --teal-header:#00C7B5; --teal-header-dk:#00a89a; --teal-band:#0c5048;
     --teal-light:#E5F9F7; --yellow:#FFFFCC; --yellow-bright:#FFFF00; --pink:#FFCCFF;
     --red:#d11a1a; --grid:#bfbfbf; --grid-soft:#d9d9d9;
     --ink:#1a1a1a; --ink-soft:#555; --bg:#ffffff; --shell:#f3f3f1;
   }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{zoom:1.05;background:var(--shell);color:var(--ink);font-family:'Archivo Narrow','Aptos Narrow',Calibri,system-ui,sans-serif;font-size:13px;line-height:1.35;-webkit-font-smoothing:antialiased;padding:1.5rem 1rem 6rem}
+  #screen-app *{box-sizing:border-box;margin:0;padding:0}
+  #screen-app{zoom:1.05;background:var(--shell);color:var(--ink);font-family:'Archivo Narrow','Aptos Narrow',Calibri,system-ui,sans-serif;font-size:13px;line-height:1.35;-webkit-font-smoothing:antialiased;padding:1.5rem 1rem 6rem}
 
   .layout{display:flex;gap:1.1rem;align-items:flex-start;max-width:1320px;margin:0 auto}
 
@@ -26,7 +172,7 @@
   .ci-list a:hover{background:var(--teal-light);color:#08312c}
   .ci-list a.active{background:var(--teal-light);color:#08312c;border-left-color:var(--teal-header);font-weight:700}
 
-  .sheet{flex:1;min-width:0;background:var(--bg);border:1px solid var(--grid);box-shadow:0 1px 0 rgba(0,0,0,.04),0 10px 30px -18px rgba(0,0,0,.35)}
+  .xsheet{flex:1;min-width:0;background:var(--bg);border:1px solid var(--grid);box-shadow:0 1px 0 rgba(0,0,0,.04),0 10px 30px -18px rgba(0,0,0,.35)}
   .sheet-tabs{display:flex;background:#e4e4e1;border-bottom:1px solid var(--grid);padding:.35rem .4rem 0}
   .tab{font-size:12px;font-weight:600;padding:.45rem .85rem;color:var(--ink-soft);background:#d6d6d3;margin-right:2px;border:1px solid transparent;border-bottom:none;border-radius:4px 4px 0 0;cursor:pointer;user-select:none}
   .tab:hover{background:#cdcdc9}
@@ -138,7 +284,7 @@
   #status.ok{background:var(--teal-light);border:1px solid var(--teal-header-dk);color:#08312c}
   #status.err{background:#fde9e9;border:1px solid #e0a0a0;color:#922}
 
-  footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:1.4rem;line-height:1.5}
+  #screen-app footer{text-align:center;color:var(--ink-soft);font-size:11px;margin-top:1.4rem;line-height:1.5}
 
   @media(max-width:920px){
     .layout{flex-direction:column;gap:.6rem}
@@ -151,9 +297,122 @@
   @media(max-width:700px){
     table.qa td.q{width:auto}
   }
+
+/* ---- Koda brand overrides (scoped, cosmetic only) ---- */
+#screen-app{--teal-band:#001F41;--teal-light:#E7F7F4;--shell:#F4F6F8;--pink:#CFF1EC;--grid:#E3E9EF;--grid-soft:#EDF1F5;font-family:var(--body);zoom:1}
+#screen-app .sheet-title{font-family:var(--display);font-weight:400;color:var(--navy);font-size:24px}
+#screen-app .ex-title{font-family:var(--display);font-weight:400;color:var(--navy)}
+#screen-app .xsheet{border-radius:14px;border-color:#E3E9EF;box-shadow:0 1px 0 rgba(0,0,0,.03),0 18px 40px -28px rgba(0,31,65,.45);overflow:hidden}
+#screen-app .cat-index{border-radius:14px;border-color:#E3E9EF}
+#screen-app .tab.active{box-shadow:inset 0 2.5px 0 var(--teal)}
+#screen-app table.qa th,#screen-app table.grid thead th{letter-spacing:.01em}
+/* ---- cell spacing / readability (scoped, cosmetic only) ---- */
+#screen-app table.grid td,#screen-app table.qa td.q{font-size:13px}
+#screen-app table.grid thead th{padding:.7rem .65rem;line-height:1.35}
+#screen-app tr.cat-band td{padding:.75rem .75rem;line-height:1.55}
+#screen-app td.activity-cell{padding:.7rem .65rem .7rem 1.75rem;line-height:1.45}
+#screen-app td.yellow input{padding:.65rem .6rem}
+#screen-app td.actual{padding:.65rem .65rem}
+#screen-app tr.act-head .toggle{padding:.7rem .6rem;line-height:1.4}
+#screen-app tr.act-head .dc-cell select{padding:.65rem .35rem}
+#screen-app tr.act-head .head-label,#screen-app tr.act-head .head-total{padding:.7rem .6rem}
+#screen-app tr.adder td{padding:.4rem .5rem}
+#screen-app table.qa th{padding:.65rem .7rem}
+#screen-app table.qa td.q{padding:.85rem .8rem;line-height:1.55}
+#screen-app table.qa td.a input,#screen-app table.qa td.a select,#screen-app table.qa td.a textarea{padding:.8rem .7rem;font-size:13px}
+#screen-app table.qa td.a textarea{min-height:74px;line-height:1.5}
+#screen-app .ex-a,#screen-app .ex-y,#screen-app .ex-ac{padding:.6rem .6rem;line-height:1.4}
+/* ---- centering + larger tabs/index/buttons + heading & button spacing (scoped, cosmetic only) ---- */
+#screen-app .layout{zoom:.95;justify-content:center}      /* unit 5% smaller, kept centred; index<->grid gap unchanged */
+#screen-app .tab{font-size:14.5px;padding:.62rem 1.2rem}
+#screen-app .action-note{margin-bottom:.45rem}
+#screen-app .sheet-title{margin-bottom:1.35rem}
+#screen-app .ex-title{margin:1.75rem 0 .85rem}
+#screen-app .toolbar{margin-bottom:1.1rem}
+#screen-app .tool-btn{font-size:13px;padding:.5rem 1.05rem;border-radius:6px}
+#screen-app .submit-row{margin-top:2.2rem;padding-top:1.7rem;gap:1.4rem}
+#screen-app button.submit{font-size:15.5px;padding:.82rem 2.2rem;border-radius:6px}
+@media(min-width:921px){
+  #screen-app .cat-index{width:246px}
+  #screen-app .ci-head{font-size:12.5px;padding:.75rem .95rem}
+  #screen-app .ci-list a{font-size:14px;padding:.6rem .6rem .6rem .95rem;line-height:1.42}
+}
+
 </style>
 </head>
 <body>
+
+
+<div class="topbar">
+  <img class="logo" src="data:image/png;base64,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" alt="Koda Capital">
+  <div class="sep"></div>
+  <div class="sub">Manager Due Diligence Portal</div>
+</div>
+
+
+<main class="stage" id="home">
+  <div class="intro">
+    <div class="eyebrow">Manager monitoring</div>
+    <h1>What would you like to complete?</h1>
+    <p>Choose a workflow below. Each opens the matching Koda template for you to complete and submit.</p>
+  </div>
+  <div class="tree">
+    <div class="qrow"><span class="qnum">Step 1</span><span class="qtext">Select a submission type</span></div>
+    <div class="opts">
+      <button class="opt" id="chooseDDQ">
+        <span class="ot">Periodic Due Diligence Review</span>
+        <span class="od">Periodic monitoring questionnaire for an existing fund &mdash; equity &amp; hedge, traded credit, or private credit.</span>
+        <span class="home-meta">Guided by fund type &middot; 3 templates</span>
+        <span class="go">Choose fund type &rarr;</span>
+      </button>
+      <button class="opt" id="chooseScreen">
+        <span class="ot">Detailed Screening File</span>
+        <span class="od">Structured exposure screening across restricted activities &mdash; alcohol, tobacco, fossil fuels, gambling and more.</span>
+        <span class="home-meta">16 screening categories</span>
+        <span class="go">Open screening file &rarr;</span>
+      </button>
+    </div>
+  </div>
+</main>
+<div id="ddqView" class="view">
+<main class="stage" id="selector">
+    <button class="to-home homelink">&larr; Portal home</button>
+  <div class="intro">
+    <div class="eyebrow">Manager monitoring</div>
+    <h1>Select the right review questionnaire</h1>
+    <p>Answer a short series of questions about the fund and we'll open the matching periodic due-diligence template for you to complete and submit.</p>
+  </div>
+  <div class="tree">
+    <div class="path" id="path"></div>
+    <div id="nodeHost"></div>
+  </div>
+  <div class="jump">
+    <div class="lbl">Or jump straight to a template</div>
+    <div class="links" id="jumpLinks"></div>
+  </div>
+</main>
+
+<section class="review" id="review">
+  <aside class="rail">
+    <button class="back" id="backBtn">&larr; Change selection</button>
+    <p class="tname" id="railName"></p>
+    <p class="tpath" id="railPath"></p>
+    <div class="progwrap">
+      <div class="pt"><span>Responses</span><b id="progText">0 / 0</b></div>
+      <div class="bar"><i id="progBar"></i></div>
+    </div>
+    <ul class="nav" id="navList"></ul>
+    <button class="btn btn-primary" id="railSubmit">Submit review</button>
+    <button class="btn btn-ghost" id="printBtn">Print / Save as PDF</button>
+  </aside>
+  <div class="sheet" id="sheet"></div>
+</section>
+
+
+</div>
+<section id="screenView" class="view">
+  <div class="screen-subnav"><button class="to-home">&larr; Portal home</button><span class="crumbtxt">Detailed Screening File</span></div>
+  <div id="screen-app">
 <div class="layout">
 
   <nav class="cat-index" id="catIndex">
@@ -161,7 +420,7 @@
     <ul class="ci-list" id="catList"></ul>
   </nav>
 
-  <div class="sheet">
+  <div class="xsheet">
     <div class="sheet-tabs">
       <div class="tab active" data-panel="panel-fund">1. Fund Details</div>
       <div class="tab" data-panel="panel-instructions">2. Instructions &amp; Example</div>
@@ -289,8 +548,251 @@ C. Any tie — involvement in any related activity considered material to disclo
     </div>
   </div>
 </div>
+  </div>
+</section>
 
 <script>
+/* ===== Periodic Due Diligence Review module ===== */
+(function(){
+
+const DATA = {"equity": {"id": "equity", "name": "Equity & Hedge Funds", "blurb": "Listed equity, long-only and long/short strategies.", "fields": [{"label": "Fund Name", "long": false}, {"label": "Fund Strategy", "long": true}], "sections": [{"title": "Performance & Market Review", "items": [{"label": "3M Net Return", "hint": null, "sub": false, "long": false}, {"label": "3M Benchmark Return (Please specify Benchmark)", "hint": null, "sub": true, "long": true}, {"label": "12M Net Return", "hint": null, "sub": false, "long": false}, {"label": "12M Benchmark Return (Please specify Benchmark)", "hint": null, "sub": true, "long": true}, {"label": "Volatility over the past 12 months", "hint": null, "sub": false, "long": false}, {"label": "Alpha (Please specify Benchmark) over the past 12 months", "hint": null, "sub": false, "long": true}, {"label": "Beta (Please specify Benchmark) over the past 12 months", "hint": null, "sub": false, "long": true}, {"label": "Correlation (Please specify Benchmark) over the past 12 months", "hint": null, "sub": false, "long": true}, {"label": "Sharpe Ratio (Please specify Reference Risk Free Rate) over the past 12 months", "hint": null, "sub": false, "long": true}, {"label": "Information Ratio over the past 12 months", "hint": null, "sub": false, "long": false}, {"label": "Sortino Ratio over the past 12 months", "hint": null, "sub": false, "long": false}, {"label": "Net Exposure as of end of quarter (for long/short strategies)", "hint": null, "sub": false, "long": false}, {"label": "Gross Exposure as of end of quarter (for long/short strategies)", "hint": null, "sub": false, "long": false}, {"label": "% Positive Months since inception", "hint": null, "sub": false, "long": false}, {"label": "Worst Month since inception", "hint": null, "sub": false, "long": false}, {"label": "Max Drawdown since inception", "hint": null, "sub": false, "long": false}]}, {"title": "Material Updates", "items": [{"label": "What were the Key observations over the quarter including the main drivers of the fund's performance.", "hint": null, "sub": false, "long": true}, {"label": "Top 5 contributing positions over the quarter.", "hint": "approximate weight, name of position, brief commentary", "sub": false, "long": true}, {"label": "Top 5 detracting positions over the quarter.", "hint": "approximate weight, name of position, brief commentary", "sub": true, "long": true}, {"label": "Has there been any other notable changes to the portfolio over the last 3 months?", "hint": "e.g. credit quality, sector exposures, duration, credit spreads etc.", "sub": false, "long": true}, {"label": "Comment on any changes in valuations across your universe? Where are you identifying the most compelling opportunities? What areas of the market are you avoiding?", "hint": null, "sub": false, "long": true}]}, {"title": "Operational", "items": [{"label": "Fund AUM", "hint": null, "sub": false, "long": false}, {"label": "Firm AUM", "hint": null, "sub": false, "long": false}, {"label": "Net change to Fund AUM over the last 3M, 12M", "hint": null, "sub": false, "long": false}, {"label": "Net change to Firm AUM over the last 3M, 12M", "hint": null, "sub": true, "long": false}, {"label": "Please specify if there were any changes (or pending) to the fund's key executives over the last 3 months? (I.e. Portfolio manager, CFO, COO Etc.?)", "hint": null, "sub": false, "long": true}, {"label": "Please specify if there has been any change in Investment Manager ownership within the organisation over the last 3 months.", "hint": null, "sub": false, "long": true}, {"label": "Please specify if there were any changes (or pending) to the fund's key service providers over the last 3 months. (I.e. Legal advisor, administrator, responsible entity, custodian etc.). If yes, why?", "hint": null, "sub": false, "long": true}, {"label": "Please specify if there were any changes to the fund's legal documents over the last 3 months? (PPM, LPA, PDS, IM, Constitution, Trust Deed, TMD etc.)", "hint": null, "sub": false, "long": true}, {"label": "Please specify if there have been (or are any pending) changes to regulation that have/could negatively impact the investment strategy.", "hint": null, "sub": false, "long": true}, {"label": "[If Applicable]: Has the fund received any Research Rating confirmations/upgrades/downgrades in the past 3 months? If so, please specify the house and recommendation", "hint": null, "sub": false, "long": true}, {"label": "Has there been any regulatory inquiries into the fund, firm or any of the service providers in the past 12 months?", "hint": null, "sub": false, "long": true}, {"label": "Has the fund soft closed over the last 3 months?", "hint": null, "sub": false, "long": false}, {"label": "Top 5 investors % out of NAV", "hint": null, "sub": false, "long": false}, {"label": "Please provide details about any active side pockets.", "hint": null, "sub": false, "long": true}, {"label": "Has the fund won or lost any material mandates over the last 3 months?", "hint": null, "sub": false, "long": false}]}, {"title": "Investments and Portfolio Management Related", "items": [{"label": "Largest position as a percentage of the fund", "hint": null, "sub": false, "long": false}, {"label": "Top 5 positions as a percentage of the fund", "hint": null, "sub": false, "long": false}, {"label": "Current and historical indicative leverage", "hint": null, "sub": false, "long": false}, {"label": "Please provide a brief update on the main drivers behind the fund's return over the past 3 months", "hint": null, "sub": false, "long": true}, {"label": "Portfolio turnover in the last 3 months and 12 months as percentage of the fund", "hint": null, "sub": false, "long": true}, {"label": "Has the funds concentration to a particular asset-type, region, or sector significantly increased in the past 12 months?", "hint": null, "sub": false, "long": true}, {"label": "3M Benchmark Return", "hint": null, "sub": true, "long": false}, {"label": "12M Benchmark Return", "hint": null, "sub": true, "long": false}, {"label": "Change in Net Exposure (for long/short strategies) during the last 3 months", "hint": null, "sub": true, "long": true}, {"label": "Change in Gross Exposure (for long/short strategies) during the last 3 months", "hint": null, "sub": true, "long": true}, {"label": "Top 5 detractors positions over the quarter.", "hint": null, "sub": true, "long": true}, {"label": "Net change to Firm AUM over the last 3M, 12M", "hint": null, "sub": true, "long": false}, {"label": "Portfolio average valuation metrics (P/E, EV/EBITDA, FCFE/E etc)", "hint": null, "sub": true, "long": true}]}]}, "credit": {"id": "credit", "name": "Traded Credit Funds", "blurb": "Bond and traded/public credit strategies.", "fields": [{"label": "Fund Name", "long": false}], "sections": [{"title": "Performance & Market Review", "items": [{"label": "3M Net Return", "hint": null, "sub": false, "long": false}, {"label": "3M Benchmark Return (please specify Benchmark)", "hint": null, "sub": true, "long": true}, {"label": "12M Net Return", "hint": null, "sub": false, "long": false}, {"label": "12M Benchmark Return (please specify Benchmark)", "hint": null, "sub": true, "long": true}, {"label": "Worst Month Since Inception", "hint": null, "sub": false, "long": false}, {"label": "Max Drawdown Since Inception", "hint": null, "sub": false, "long": false}]}, {"title": "Material Updates", "items": [{"label": "Please provide your key observations over the quarter including the main drivers of the fund's performance.", "hint": null, "sub": false, "long": true}, {"label": "Top 5 contributing positions over the quarter.", "hint": "approximate weight, name of position, brief commentary, contribution to performance", "sub": false, "long": true}, {"label": "Top 5 detracting positions over the quarter.", "hint": "approximate weight, name of position, brief commentary, contribution to performance", "sub": true, "long": true}, {"label": "Has there been any other notable changes to the portfolio over the last 3 months?", "hint": "e.g. credit quality, sector exposures, duration, credit spreads etc.", "sub": false, "long": true}, {"label": "Credit spreads and interest rates have risen sharply. Are you seeing any pockets or areas of stress? What factors give you comfort (position in the capital structure, leverage, sector positioning, etc.) of the portfolio’s resiliency to economic uncertainty / weakness.", "hint": null, "sub": false, "long": true}, {"label": "Has the funds concentration to a particular asset-type, region, or sector significantly increased in the past 3 months?", "hint": null, "sub": true, "long": true}]}, {"title": "Operational", "items": [{"label": "Fund AUM", "hint": null, "sub": false, "long": false}, {"label": "Firm AUM", "hint": null, "sub": false, "long": false}, {"label": "Net change to Fund AUM over the last 3M, 12M", "hint": null, "sub": false, "long": false}, {"label": "Net change to Firm AUM over the last 3M, 12M", "hint": null, "sub": true, "long": false}, {"label": "Please specify if there were any changes (or pending) to the fund's key executives over the last 3 months? (I.e. Portfolio manager, CFO, COO Etc.?)", "hint": null, "sub": false, "long": true}, {"label": "Please specify if there were any changes (or pending) to the fund's key service providers over the last 3 months. (I.e. Legal advisor, administrator, responsible entity, custodian etc.). If yes, why?", "hint": null, "sub": false, "long": true}, {"label": "Please specify if there were any changes to the fund's legal documents over the last 3 months? (PPM, LPA, PDS, IM, Constitution, Trust Deed, TMD etc.)", "hint": null, "sub": false, "long": true}, {"label": "Please specify if there have been (or are any pending) changes to regulation that have/could negatively impact the investment strategy.", "hint": null, "sub": false, "long": true}, {"label": "Please specify if there has been any change in Investment Manager ownership within the organisation over the last 3 months.", "hint": null, "sub": false, "long": true}, {"label": "[If Applicable]: Has the fund received any Research Rating confirmations/upgrades/downgrades in the past 3 months? If so, please specify the house and recommendation", "hint": null, "sub": false, "long": true}, {"label": "Has there been any regulatory inquiries into the fund, firm or any of the service providers in the past 12 months?", "hint": null, "sub": false, "long": true}, {"label": "Has the fund soft closed over the last 3 months?", "hint": null, "sub": false, "long": false}, {"label": "Top 5 investors % out of NAV", "hint": null, "sub": false, "long": false}, {"label": "Has the manager won or lost any material mandates over the last 3 months?", "hint": null, "sub": false, "long": true}]}, {"title": "Investments and Portfolio Management Related", "items": [{"label": "Historical default rate since inception", "hint": null, "sub": false, "long": false}, {"label": "Historical recovery rate since inception", "hint": null, "sub": true, "long": false}, {"label": "Were there any positions disposed of in the portfolio at sub par pricing during the last 3 months?", "hint": null, "sub": true, "long": true}, {"label": "Were there any markdowns/provisions taken by the fund during the last 3 months?", "hint": null, "sub": true, "long": true}, {"label": "Were there any conversions from debt to equity during the last 3 months?", "hint": null, "sub": true, "long": true}, {"label": "Were there any positions that were introduced to the fund through affiliated entities or under a conflict of interests during the last 3 months?", "hint": null, "sub": true, "long": true}, {"label": "Average LTV for private positions", "hint": null, "sub": false, "long": false}, {"label": "Yield to maturity", "hint": null, "sub": true, "long": false}, {"label": "Average credit rating", "hint": null, "sub": true, "long": false}, {"label": "Portfolio duration and/or Tenor", "hint": null, "sub": false, "long": false}, {"label": "Current % of portfolio loans/bonds in default (including technical) / mediation / distressed / breach of covenants", "hint": null, "sub": false, "long": true}, {"label": "% of loans/bonds that are on watch", "hint": null, "sub": true, "long": false}, {"label": "% of loans/bonds impaired in anyway", "hint": null, "sub": true, "long": false}, {"label": "Largest loan/bond as percent of fund", "hint": null, "sub": false, "long": false}, {"label": "Largest borrower/issuer as percent of fund", "hint": null, "sub": false, "long": false}, {"label": "Top 5 positions as percent of fund", "hint": null, "sub": false, "long": false}, {"label": "Current fund level leverage/borrowing", "hint": null, "sub": false, "long": false}]}]}, "privateCredit": {"id": "privateCredit", "name": "Private Credit Funds", "blurb": "Private credit and direct-lending strategies.", "fields": [{"label": "Fund Name", "long": false}], "sections": [{"title": "Performance & Market Review", "items": [{"label": "3M Net Return", "hint": null, "sub": false, "long": false}, {"label": "3M Benchmark Return (please specify Benchmark)", "hint": null, "sub": true, "long": true}, {"label": "12M Net Return", "hint": null, "sub": false, "long": false}, {"label": "12M Benchmark Return (please specify Benchmark)", "hint": null, "sub": true, "long": true}, {"label": "Worst Month Since Inception", "hint": null, "sub": false, "long": false}, {"label": "Max Drawdown Since Inception", "hint": null, "sub": false, "long": false}]}, {"title": "Material Updates", "items": [{"label": "Please provide your key observations over the quarter including the main drivers of the fund's performance.", "hint": null, "sub": false, "long": true}, {"label": "Top 5 contributing positions over the quarter.", "hint": "approximate weight, name of position, brief commentary, contribution to performance", "sub": false, "long": true}, {"label": "Top 5 detracting positions over the quarter.", "hint": "approximate weight, name of position, brief commentary, contribution to performance", "sub": true, "long": true}, {"label": "Has there been any other notable changes to the portfolio over the last 3 months?", "hint": "e.g. credit quality, sector exposures, duration, credit spreads etc.", "sub": false, "long": true}, {"label": "Credit spreads and interest rates have risen sharply. Are you seeing any pockets or areas of stress? What factors give you comfort (position in the capital structure, leverage, sector positioning, etc.) of the portfolio’s resiliency to economic uncertainty / weakness.", "hint": null, "sub": false, "long": true}, {"label": "Has the funds concentration to a particular asset-type, region, or sector significantly increased in the past 3 months?", "hint": null, "sub": true, "long": true}]}, {"title": "Operational", "items": [{"label": "Fund AUM", "hint": null, "sub": false, "long": false}, {"label": "Firm AUM", "hint": null, "sub": false, "long": false}, {"label": "Net change to Fund AUM over the last 3M, 12M", "hint": null, "sub": false, "long": false}, {"label": "Net change to Firm AUM over the last 3M, 12M", "hint": null, "sub": true, "long": false}, {"label": "Please specify if there were any changes (or pending) to the fund's key executives over the last 3 months? (I.e. Portfolio manager, CFO, COO Etc.?)", "hint": null, "sub": false, "long": true}, {"label": "Please specify if there were any changes (or pending) to the fund's key service providers over the last 3 months. (I.e. Legal advisor, administrator, responsible entity, custodian etc.). If yes, why?", "hint": null, "sub": false, "long": true}, {"label": "Please specify if there were any changes to the fund's legal documents over the last 3 months? (PPM, LPA, PDS, IM, Constitution, Trust Deed, TMD etc.)", "hint": null, "sub": false, "long": true}, {"label": "Please specify if there have been (or are any pending) changes to regulation that have/could negatively impact the investment strategy.", "hint": null, "sub": false, "long": true}, {"label": "Please specify if there has been any change in Investment Manager ownership within the organisation over the last 3 months.", "hint": null, "sub": false, "long": true}, {"label": "[If Applicable]: Has the fund received any Research Rating confirmations/upgrades/downgrades in the past 3 months? If so, please specify the house and recommendation", "hint": null, "sub": false, "long": true}, {"label": "Has there been any regulatory inquiries into the fund, firm or any of the service providers in the past 12 months?", "hint": null, "sub": false, "long": true}, {"label": "Has the fund soft closed over the last 3 months?", "hint": null, "sub": false, "long": false}, {"label": "Top 5 investors % out of NAV", "hint": null, "sub": false, "long": false}, {"label": "Has the manager won or lost any material mandates over the last 3 months?", "hint": null, "sub": false, "long": true}]}, {"title": "Investments and Portfolio Management Related", "items": [{"label": "Historical default rate since inception", "hint": null, "sub": false, "long": false}, {"label": "Historical recovery rate since inception", "hint": null, "sub": true, "long": false}, {"label": "Were there any positions disposed of in the portfolio at sub par pricing during the last 3 months?", "hint": null, "sub": true, "long": true}, {"label": "Were there any markdowns/provisions taken by the fund during the last 3 months?", "hint": null, "sub": true, "long": true}, {"label": "Were there any conversions from debt to equity during the last 3 months?", "hint": null, "sub": true, "long": true}, {"label": "Were there any positions that were introduced to the fund through affiliated entities or under a conflict of interests during the last 3 months?", "hint": null, "sub": true, "long": true}, {"label": "Average LTV for private positions", "hint": null, "sub": false, "long": false}, {"label": "Yield to maturity", "hint": null, "sub": true, "long": false}, {"label": "Average credit rating", "hint": null, "sub": true, "long": false}, {"label": "Portfolio duration and/or Tenor", "hint": null, "sub": false, "long": false}, {"label": "Current % of portfolio loans/bonds in default (including technical) / mediation / distressed / breach of covenants", "hint": null, "sub": false, "long": true}, {"label": "% of loans/bonds that are on watch", "hint": null, "sub": true, "long": false}, {"label": "% of loans/bonds impaired in anyway", "hint": null, "sub": true, "long": false}, {"label": "Largest loan/bond as percent of fund", "hint": null, "sub": false, "long": false}, {"label": "Largest borrower/issuer as percent of fund", "hint": null, "sub": false, "long": false}, {"label": "Top 5 positions as percent of fund", "hint": null, "sub": false, "long": false}, {"label": "Current fund level leverage/borrowing", "hint": null, "sub": true, "long": false}]}, {"title": "Private Debt Specific", "items": [{"label": "How does the manager distinguish between “as is” and “as if complete” LVRs in its underwriting and reporting processes?", "hint": null, "sub": true, "long": true}, {"label": "What percentage of the portfolio is invested in loans that breach any of the strategy's policy (such as origination policy, etc)", "hint": null, "sub": true, "long": true}, {"label": "How does the manager ensure that all liens are recorded accurately and in a timely manner?", "hint": null, "sub": true, "long": true}, {"label": "Can the manager provide collateral that verifies all reported lien positions, such as land registry extracts or other supporting documentation?", "hint": null, "sub": true, "long": true}, {"label": "Were any loans originated outside the mandate defined in the manager’s IMs and internal policies during the period? If yes, please provide details.", "hint": null, "sub": true, "long": true}, {"label": "Can the manager attest that all information provided in this questionnaire is complete and accurate to the best of its knowledge?", "hint": null, "sub": true, "long": true}]}]}};
+
+/* ============================================================
+   SUBMISSION SETTINGS  — edit these two lines to go live.
+   1. Create a free access key at https://web3forms.com (enter the
+      inbox that should receive submissions; the key is tied to it).
+   2. Paste the key below. Until then, Submit runs in preview mode.
+   ============================================================ */
+const CONFIG = {
+  accessKey: "a24a57f4-8e46-4612-b1ed-2dc8681a503f",
+  notifyTo:  "duediligence@kodacapital.com",   // shown to the user only
+  subject:   "Periodic Due Diligence Review submission"
+};
+
+const TREE = {
+  q: "What asset class does the fund primarily invest in?",
+  options: [
+    { title:"Equity & Hedge", desc:"Listed equities, long-only or long/short strategies.", goto:"equity" },
+    { title:"Credit & Debt", desc:"Bonds, loans and other fixed-income or credit strategies.",
+      next:{ q:"How does the fund primarily access its credit exposure?",
+        options:[
+          { title:"Traded / public credit", desc:"Bonds, syndicated loans and other liquid, market-traded credit.", goto:"credit" },
+          { title:"Private credit / direct lending", desc:"Privately originated loans held to maturity; direct lending.", goto:"privateCredit" },
+        ]}}
+  ]
+};
+
+const $ = s => document.querySelector(s);
+let stack=[], nodeStack=[TREE], currentId=null, responseEls=[], attachedFiles=[];
+
+/* ---------- decision tree ---------- */
+function renderNode(){
+  const node=nodeStack[nodeStack.length-1], host=$("#nodeHost"), step=nodeStack.length;
+  host.innerHTML="";
+  const wrap=document.createElement("div"); wrap.className="node";
+  wrap.innerHTML='<div class="qrow"><span class="qnum">Step '+step+'</span><span class="qtext">'+node.q+'</span></div>';
+  const opts=document.createElement("div"); opts.className="opts";
+  node.options.forEach(o=>{
+    const b=document.createElement("button"); b.className="opt";
+    b.innerHTML='<span class="ot">'+o.title+'</span><span class="od">'+o.desc+'</span><span class="go">'+(o.goto?"Open template &rarr;":"Continue &rarr;")+'</span>';
+    b.onclick=()=>{ stack.push(o.title); if(o.goto){openReview(o.goto);} else {nodeStack.push(o.next);renderPath();renderNode();} };
+    opts.appendChild(b);
+  });
+  wrap.appendChild(opts); host.appendChild(wrap);
+}
+function renderPath(){
+  const p=$("#path"); p.innerHTML="";
+  stack.forEach((label,i)=>{
+    if(i){const a=document.createElement("span");a.className="arr";a.textContent="›";p.appendChild(a);}
+    const c=document.createElement("span"); c.className="crumb";
+    c.innerHTML=label+' <button title="Undo this choice" aria-label="Undo">✕</button>';
+    c.querySelector("button").onclick=()=>{stack=stack.slice(0,i);nodeStack=nodeStack.slice(0,i+1);renderPath();renderNode();};
+    p.appendChild(c);
+  });
+}
+function resetTree(){stack=[];nodeStack=[TREE];renderPath();renderNode();}
+(function(){const host=$("#jumpLinks");Object.values(DATA).forEach(t=>{const b=document.createElement("button");b.className="jlink";b.textContent=t.name;b.onclick=()=>{stack=["Direct: "+t.name];openReview(t.id);};host.appendChild(b);});})();
+
+/* ---------- auto-growing field ---------- */
+function autosize(el){el.style.height="auto";el.style.height=(el.scrollHeight+2)+"px";}
+function fieldEl(long,ph){
+  const el=document.createElement("textarea");
+  el.className="resp"+(long?" long":""); el.rows=1; if(ph)el.placeholder=ph;
+  el.addEventListener("input",()=>{autosize(el);updateProgress();});
+  return el;
+}
+
+/* ---------- build review ---------- */
+function openReview(id){
+  currentId=id; responseEls=[]; attachedFiles=[];
+  const t=DATA[id];
+  $("#selector").style.display="none"; $("#review").classList.add("on");
+  $("#railName").textContent=t.name; $("#railPath").textContent=stack.join("  ›  ");
+  window.scrollTo(0,0);
+  const sheet=$("#sheet");
+  sheet.innerHTML='<div class="doc-eyebrow">Koda periodic update questionnaire</div><h2 class="doctitle">'+t.name+'</h2>';
+
+  t.fields.forEach(f=>{
+    const isName=f.label.toLowerCase().includes("name");
+    const wrap=document.createElement("div"); wrap.className="field"+(isName?" fundname":"");
+    const lab=document.createElement("label"); lab.textContent=f.label; wrap.appendChild(lab);
+    const el=fieldEl(f.long,isName?"Enter fund name":""); wrap.appendChild(el);
+    responseEls.push({section:"General",label:f.label,el}); sheet.appendChild(wrap);
+  });
+
+  const navList=$("#navList"); navList.innerHTML="";
+  t.sections.forEach((sec,si)=>{
+    const secId="sec-"+si;
+    const block=document.createElement("div"); block.className="section"; block.id=secId;
+    block.innerHTML='<div class="sechead"><span class="sn">'+(si+1)+'</span><h3>'+sec.title+'</h3></div>';
+    sec.items.forEach(it=>{
+      const row=document.createElement("div"); row.className="item"+(it.sub?" sub":"");
+      const q=document.createElement("div"); q.className="q"; q.textContent=it.label; row.appendChild(q);
+      if(it.hint){const h=document.createElement("div");h.className="hint";h.textContent=it.hint;row.appendChild(h);}
+      const el=fieldEl(it.long,it.hint||""); row.appendChild(el);
+      responseEls.push({section:sec.title,label:it.label,el}); block.appendChild(row);
+    });
+    sheet.appendChild(block);
+    const li=document.createElement("li"); const a=document.createElement("a");
+    a.href="#"+secId; a.textContent=sec.title;
+    a.onclick=e=>{e.preventDefault();document.getElementById(secId).scrollIntoView({behavior:"smooth",block:"start"});};
+    li.appendChild(a); navList.appendChild(li);
+  });
+
+  buildDropzone(sheet);
+  buildSubmit(sheet);
+
+  const foot=document.createElement("div"); foot.className="foot";
+  foot.textContent="Responses are held in this browser session only. Submitting emails a copy to the Koda team; Print / Save as PDF keeps a local copy.";
+  sheet.appendChild(foot);
+
+  document.querySelectorAll("#sheet textarea.resp").forEach(autosize);
+  setupScrollSpy(); updateProgress();
+}
+
+/* ---------- dropzone ---------- */
+function buildDropzone(sheet){
+  const sec=document.createElement("div"); sec.className="section";
+  sec.innerHTML='<div class="sechead"><span class="sn">+</span><h3>Supporting material</h3></div>';
+  const dz=document.createElement("div"); dz.className="drop"; dz.tabIndex=0;
+  dz.innerHTML='<div class="di">Drag &amp; drop files here, or <span class="browse">browse</span></div>'
+             +'<div class="ds">Fund reports, factsheets, holdings, audited accounts — PDF, Excel, Word, images</div>';
+  const input=document.createElement("input"); input.type="file"; input.multiple=true; input.style.display="none";
+  const list=document.createElement("ul"); list.className="filelist";
+  dz.onclick=()=>input.click();
+  dz.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();input.click();}};
+  input.onchange=()=>{addFiles(input.files,list);input.value="";};
+  ["dragenter","dragover"].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.add("over");}));
+  ["dragleave","drop"].forEach(ev=>dz.addEventListener(ev,e=>{e.preventDefault();dz.classList.remove("over");}));
+  dz.addEventListener("drop",e=>addFiles(e.dataTransfer.files,list));
+  sec.appendChild(dz); sec.appendChild(input); sec.appendChild(list); sheet.appendChild(sec);
+}
+function fmtSize(b){return b<1024?b+" B":b<1048576?(b/1024).toFixed(0)+" KB":(b/1048576).toFixed(1)+" MB";}
+function addFiles(files,list){
+  [...files].forEach(f=>{ if(!attachedFiles.some(x=>x.name===f.name&&x.size===f.size)) attachedFiles.push(f); });
+  renderFiles(list);
+}
+function renderFiles(list){
+  list.innerHTML="";
+  attachedFiles.forEach((f,i)=>{
+    const li=document.createElement("li"); li.className="filerow";
+    li.innerHTML='<span class="fn"></span><span class="fz">'+fmtSize(f.size)+'</span><button class="rm" title="Remove" aria-label="Remove file">✕</button>';
+    li.querySelector(".fn").textContent=f.name;
+    li.querySelector(".rm").onclick=()=>{attachedFiles.splice(i,1);renderFiles(list);};
+    list.appendChild(li);
+  });
+}
+
+/* ---------- submit ---------- */
+function buildSubmit(sheet){
+  const b=document.createElement("div"); b.className="submitblock";
+  b.innerHTML='<div class="sb-row"><button class="btn-submit" id="mainSubmit">Submit review</button>'
+            +'<span class="note">A completed copy will be emailed to '+CONFIG.notifyTo+'. Please confirm the fund name is filled in before submitting.</span></div>'
+            +'<div class="banner" id="banner"></div>';
+  sheet.appendChild(b);
+  b.querySelector("#mainSubmit").onclick=submitForm;
+}
+function showBanner(kind,msg){const el=$("#banner");if(!el)return;el.className="banner show "+kind;el.textContent=msg;el.scrollIntoView({behavior:"smooth",block:"center"});}
+
+function buildSummary(){
+  const t=DATA[currentId];
+  let lines=["KODA CAPITAL — PERIODIC DUE DILIGENCE REVIEW","Template: "+t.name,"Submitted: "+new Date().toLocaleString(),""];
+  let lastSec="";
+  responseEls.forEach(r=>{
+    if(r.section!==lastSec){lines.push("","── "+r.section.toUpperCase()+" ──");lastSec=r.section;}
+    lines.push(r.label,"   → "+(r.el.value.trim()||"(no response)"),"");
+  });
+  if(attachedFiles.length) lines.push("ATTACHMENTS: "+attachedFiles.map(f=>f.name).join(", "));
+  return lines.join("\n");
+}
+function fundName(){const f=responseEls.find(r=>r.label.toLowerCase().includes("name"));return f?f.el.value.trim():"";}
+
+async function submitForm(){
+  if(!fundName()){showBanner("err","Please enter the fund name before submitting.");const f=responseEls.find(r=>r.label.toLowerCase().includes("name"));if(f)f.el.focus();return;}
+  const summary=buildSummary(), fund=fundName(), t=DATA[currentId];
+  const btns=document.querySelectorAll("#mainSubmit,#railSubmit");
+
+  if(!CONFIG.accessKey || CONFIG.accessKey.startsWith("PASTE-")){
+    // Preview mode — no email service connected yet
+    downloadCopy(summary,fund);
+    const body=encodeURIComponent(summary.slice(0,1800)+"\n\n[Full copy downloaded as a .txt file — please attach it and any supporting files to this email.]");
+    window.location.href="mailto:"+encodeURIComponent(CONFIG.notifyTo)+"?subject="+encodeURIComponent(CONFIG.subject+" — "+fund)+"&body="+body;
+    showBanner("info","Preview mode: no email service is connected yet, so a copy was downloaded and your email app opened with a draft. Add a Web3Forms access key in the file to enable one-click submission with attachments.");
+    return;
+  }
+
+  btns.forEach(b=>{b.disabled=true;}); showBanner("info","Submitting…");
+  try{
+    const fd=new FormData();
+    fd.append("access_key",CONFIG.accessKey);
+    fd.append("subject",CONFIG.subject+" — "+fund);
+    fd.append("from_name","Koda DDQ Portal");
+    fd.append("Template",t.name);
+    fd.append("Fund",fund);
+    fd.append("message",summary);
+    attachedFiles.forEach((f,i)=>fd.append("attachment_"+(i+1),f,f.name));
+    const res=await fetch("https://api.web3forms.com/submit",{method:"POST",body:fd});
+    const json=await res.json();
+    if(json.success){
+      showBanner("ok","Submitted. A completed copy has been emailed to the Koda team"+(attachedFiles.length?" with "+attachedFiles.length+" attachment(s).":"."));
+    }else{
+      showBanner("err","Submission failed: "+(json.message||"please try again, or use Print / Save as PDF and email it manually."));
+      btns.forEach(b=>{b.disabled=false;});
+    }
+  }catch(err){
+    showBanner("err","Could not reach the submission service. Check your connection, or use Print / Save as PDF and email it manually.");
+    btns.forEach(b=>{b.disabled=false;});
+  }
+}
+function downloadCopy(text,fund){
+  const blob=new Blob([text],{type:"text/plain"});
+  const a=document.createElement("a");
+  a.href=URL.createObjectURL(blob);
+  a.download="Koda DDQ - "+(fund||"submission").replace(/[^\w\- ]/g,"")+".txt";
+  document.body.appendChild(a);a.click();a.remove();
+}
+
+/* ---------- misc ---------- */
+function updateProgress(){
+  const done=responseEls.filter(r=>r.el.value.trim()!=="").length, total=responseEls.length;
+  $("#progText").textContent=done+" / "+total;
+  $("#progBar").style.width=(total?Math.round(done/total*100):0)+"%";
+}
+function setupScrollSpy(){
+  const links=[...document.querySelectorAll(".nav a")];
+  const secs=links.map(a=>document.getElementById(a.getAttribute("href").slice(1)));
+  const io=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){links.forEach(l=>l.classList.remove("active"));const i=secs.indexOf(e.target);if(i>=0)links[i].classList.add("active");}});},{rootMargin:"-10% 0px -75% 0px"});
+  secs.forEach(s=>s&&io.observe(s));
+}
+$("#backBtn").onclick=()=>{$("#review").classList.remove("on");$("#selector").style.display="block";window.__ddqHome=function(){document.getElementById('review').classList.remove('on');document.getElementById('selector').style.display='block';resetTree();window.scrollTo(0,0);};
+resetTree();window.scrollTo(0,0);};
+$("#printBtn").onclick=()=>window.print();
+$("#railSubmit").onclick=submitForm;
+resetTree();
+
+})();
+/* ===== Detailed Screening module (verbatim, isolated) ===== */
+(function(){
 /* ============================================================
    CONFIGURATION — EDIT THIS
    Get a free access key at https://web3forms.com (enter your inbox email there).
@@ -577,6 +1079,20 @@ document.getElementById('catIndex').style.display = 'none';  // default tab is F
 if(WEB3FORMS_ACCESS_KEY && WEB3FORMS_ACCESS_KEY!=="YOUR_WEB3FORMS_ACCESS_KEY"){
   document.getElementById('configBanner').style.display='none';
 }
+})();
+
+/* ===== Portal router ===== */
+function show(v){
+  ['home','ddqView','screenView'].forEach(function(id){
+    document.getElementById(id).style.display = (id===v ? '' : 'none');
+  });
+  window.scrollTo(0,0);
+}
+document.getElementById('chooseDDQ').addEventListener('click', function(){ show('ddqView'); if(window.__ddqHome) window.__ddqHome(); });
+document.getElementById('chooseScreen').addEventListener('click', function(){ show('screenView'); });
+document.querySelectorAll('.to-home').forEach(function(b){ b.addEventListener('click', function(){ show('home'); }); });
+show('home');
+
 </script>
 </body>
 </html>
