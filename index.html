@@ -741,6 +741,24 @@ function buildSummary(){
 }
 function fundName(){const f=responseEls.find(r=>r.label.toLowerCase().includes("name"));return f?f.el.value.trim():"";}
 
+function buildData(){
+  const t=DATA[currentId];
+  const out={
+    template:t.name,
+    templateId:currentId,
+    fundName:fundName(),
+    submittedAt:new Date().toISOString(),
+    sections:[],
+    attachments:attachedFiles.map(f=>f.name)
+  };
+  let cur=null,last=null;
+  responseEls.forEach(r=>{
+    if(r.section!==last){cur={section:r.section,items:[]};out.sections.push(cur);last=r.section;}
+    cur.items.push({question:r.label,answer:r.el.value.trim()});
+  });
+  return out;
+}
+
 async function submitForm(){
   if(!fundName()){showBanner("err","Please enter the fund name before submitting.");const f=responseEls.find(r=>r.label.toLowerCase().includes("name"));if(f)f.el.focus();return;}
   const summary=buildSummary(), fund=fundName(), t=DATA[currentId];
@@ -764,6 +782,7 @@ async function submitForm(){
     fd.append("Template",t.name);
     fd.append("Fund",fund);
     fd.append("message",summary);
+    fd.append("data_json",JSON.stringify(buildData(),null,2));
     attachedFiles.forEach((f,i)=>fd.append("attachment_"+(i+1),f,f.name));
     const res=await fetch("https://api.web3forms.com/submit",{method:"POST",body:fd});
     const json=await res.json();
